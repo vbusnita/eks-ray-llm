@@ -14,32 +14,6 @@ provider "aws" {
   profile = "terraform-local"
 }
 
-module "eks" {
-  source  = "terraform-aws-modules/eks/aws"
-  version = "~> 19.0"
-
-  cluster_name    = "ray-llm-demo"
-  cluster_version = "1.29"
-
-  vpc_id     = module.vpc.vpc_id
-  subnet_ids = module.vpc.private_subnets
-
-  eks_managed_node_groups = {
-    worker = {
-      desired_size = 1
-      min_size     = 1
-      max_size     = 1
-
-      instance_types = ["m5.large"]
-      ami_type       = "AL2_x86_64"
-
-      labels = {
-        role = "general"
-      }
-    }
-  }
-}
-
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "~> 5.0"
@@ -53,4 +27,46 @@ module "vpc" {
 
   enable_nat_gateway = true
   single_nat_gateway = true
+
+  tags = {
+    "kubernetes.io/cluster/ray-llm-demo" = "shared"
+  }
+}
+
+module "eks" {
+  source  = "terraform-aws-modules/eks/aws"
+  version = "~> 21.0"  # Critical: latest stable, fixes TLS/auth issues
+
+  cluster_name    = "ray-llm-demo"
+  cluster_version = "1.30"  # Bump to latest stable
+
+  vpc_id     = module.vpc.vpc_id
+  subnet_ids = module.vpc.private_subnets
+
+  # This gives your creator (terraform-local user) full admin access
+  enable_cluster_creator_admin_permissions = true
+
+  eks_managed_node_groups = {
+    worker = {
+      desired_size = 1
+      min_size     = 1
+      max_size     = 2
+
+      instance_types = ["m5.large"]
+      ami_type       = "AL2_x86_64"
+
+      labels = {
+        role = "general"
+      }
+    }
+  }
+
+  tags = {
+    Environment = "learning"
+    Project     = "ray-llm"
+  }
+}
+
+output "update_kubeconfig" {
+  value = "aws eks update-kubeconfig --name ${module.eks.cluster_name} --region us-east-1"
 }
