@@ -45,7 +45,7 @@ module "eks" {
 
   enable_cluster_creator_admin_permissions = true
 
-  cluster_addons = {
+  cluster_enabled_addons = {
     coredns = {
       most_recent = true
     }
