@@ -37,7 +37,7 @@ module "eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "21.10.1"
 
-  name              = "ray-llm-demo"
+  name               = "ray-llm-demo"
   kubernetes_version = "1.32"
 
   vpc_id     = module.vpc.vpc_id
@@ -45,20 +45,38 @@ module "eks" {
 
   enable_cluster_creator_admin_permissions = true
 
-  eks_managed_node_groups = {
-  worker = {
-    desired_size = 1
-    min_size     = 1
-    max_size     = 2
-
-    instance_types = ["m5.large"]
-    ami_type       = "AL2023_x86_64_STANDARD"
-
-    labels = {
-      role = "general"
+  cluster_addons = {
+    coredns = {
+      most_recent = true
+    }
+    kube-proxy = {
+      most_recent = true
+    }
+    vpc-cni = {
+      most_recent = true
+      configuration_values = jsonencode({
+        env = {
+          ENABLE_PREFIX_DELEGATION = "true"
+          WARM_PREFIX_TARGET       = "1"
+        }
+      })
     }
   }
-}
+
+  eks_managed_node_groups = {
+    worker = {
+      desired_size = 1
+      min_size     = 1
+      max_size     = 2
+
+      instance_types = ["m5.large"]
+      ami_type       = "AL2023_x86_64_STANDARD"
+
+      labels = {
+        role = "general"
+      }
+    }
+  }
 
   tags = {
     Environment = "learning"
