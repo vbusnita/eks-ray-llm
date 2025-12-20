@@ -10,7 +10,7 @@ terraform {
 }
 
 provider "aws" {
-  region = "us-east-1"
+  region  = "us-east-1"
   profile = "terraform-local"
 }
 
@@ -25,19 +25,17 @@ module "eks" {
   subnet_ids = module.vpc.private_subnets
 
   eks_managed_node_groups = {
-    gpu = {
+    worker = {
       desired_size = 1
       min_size     = 1
-      max_size     = 2
+      max_size     = 1
 
-      instance_types = ["g5.xlarge"]  # 1x A10G GPU, cheap for testing
-      ami_type       = "AL2_x86_64_GPU"
+      instance_types = ["m5.large"]
+      ami_type       = "AL2_x86_64"
 
-      taints = [{
-        key    = "gpu"
-        value  = "true"
-        effect = "NO_SCHEDULE"
-      }]
+      labels = {
+        role = "general"
+      }
     }
   }
 }
