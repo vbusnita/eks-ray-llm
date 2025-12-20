@@ -4,7 +4,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 5.0"
+      version = ">= 5.0"
     }
   }
 }
@@ -35,15 +35,14 @@ module "vpc" {
 
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "~> 21.0"  # Critical: latest stable, fixes TLS/auth issues
+  version = "21.10.1"
 
-  cluster_name    = "ray-llm-demo"
-  cluster_version = "1.30"  # Bump to latest stable
+  name              = "ray-llm-demo"
+  kubernetes_version = "1.30"  # Latest stable
 
   vpc_id     = module.vpc.vpc_id
   subnet_ids = module.vpc.private_subnets
 
-  # This gives your creator (terraform-local user) full admin access
   enable_cluster_creator_admin_permissions = true
 
   eks_managed_node_groups = {
