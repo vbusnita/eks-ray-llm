@@ -38,7 +38,7 @@ module "eks" {
   version = "21.10.1"
 
   name              = "ray-llm-demo"
-  kubernetes_version = "1.30"  # Latest stable
+  kubernetes_version = "1.32"
 
   vpc_id     = module.vpc.vpc_id
   subnet_ids = module.vpc.private_subnets
@@ -46,19 +46,19 @@ module "eks" {
   enable_cluster_creator_admin_permissions = true
 
   eks_managed_node_groups = {
-    worker = {
-      desired_size = 1
-      min_size     = 1
-      max_size     = 2
+  worker = {
+    desired_size = 1
+    min_size     = 1
+    max_size     = 2
 
-      instance_types = ["m5.large"]
-      ami_type       = "AL2_x86_64"
+    instance_types = ["m5.large"]
+    ami_type       = "AL2023_x86_64_STANDARD"
 
-      labels = {
-        role = "general"
-      }
+    labels = {
+      role = "general"
     }
   }
+}
 
   tags = {
     Environment = "learning"
