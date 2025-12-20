@@ -1,1 +1,22 @@
+# Virtual environemnt
 venv/
+
+# Terraform
+.terraform/
+.terraform.lock.hcl
+
+# State files (critical - never commit)
+terraform.tfstate
+terraform.tfstate.backup
+*.tfstate
+*.tfstate.backup
+
+# tfplan files (optional, but good to ignore)
+*.tfplan
+
+# tfvars with secrets (if you have them)
+*.tfvars
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
