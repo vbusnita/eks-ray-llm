@@ -22,7 +22,7 @@ Run vLLM on Ray Serve in EKS — scalable, cost-controlled LLM inference.
   - Session + lifetime tracking
   - Dead-man switch ($5 + 30m idle → auto destroy)
   - Tested Python script
-- Live EKS provisioning dashboard (this repo)
+- `aws-live-eks-provision-dashboard` repo: Live EKS provisioning dashboard
 
 ## Architecture
 - VPC with private/public subnets + NAT
