@@ -1,11 +1,48 @@
-# eks-ray-llm
-Deploy a small-to-medium LLM (start with Meta-Llama-3.1-8B-Instruct or Mistral-7B-Instruct for lower cost) for inference on an AWS EKS cluster using Ray Serve + vLLM backend.
+# EKS + Ray + vLLM Inference Cluster (Learning Project)
 
-- Architecture note: "Local demo uses dummy; cluster version will use vLLM for high-throughput."
-- Output for the Dummy LLM test:
-```bash 
-curl http://127.0.0.1:8000/v1 \
-  -H "Content-Type: application/json" \
-  -d '{"prompt": "What is the meaning of life?"}'
+Real-world attempt to run production-grade LLM inference on EKS.
 
-{"text":"[Dummy LLM] You said: What is the meaning of life?. I'm running on Ray Serve!","model":"Dummy-LLM-v1"}```
+**Status**: Cluster provisioning in progress (m5.large CPU pivot while GPU quota pending).
+
+## Goal
+Run vLLM on Ray Serve in EKS — scalable, cost-controlled LLM inference.
+
+## Current Challenges (Dec 2025 Reality)
+- New AWS account → 0 vCPU quota for G/P instances (GPU)
+- Spot quota also 0 → Spot failed
+- AL2 AMI deprecated Nov 26, 2025 → "unhealthy nodes" failures
+- AL2023 template bugs in older EKS modules
+- Bottlerocket health check timing issues
+
+**Current pivot**: m5.large CPU node for immediate progress.
+
+## Tools Built Along the Way
+- `aws-cost-estimator` repo: Live cost watcher with:
+  - Real-time dashboard
+  - Session + lifetime tracking
+  - Dead-man switch ($5 + 30m idle → auto destroy)
+  - Tested Python script
+- Live EKS provisioning dashboard (this repo)
+
+## Architecture
+- VPC with private/public subnets + NAT
+- EKS 1.30 cluster
+- Managed node group (m5.large CPU, switching to GPU when quota approved)
+- KubeRay operator → RayCluster → RayService + vLLM
+
+## Setup
+```bash
+cd infra
+terraform init
+terraform apply
+```
+
+## Monitoring
+- Cost watcher
+```bash
+./live-eks-cost-watcher.py
+```
+- Provisioning dashboard
+```bash
+./live-eks-provision-dashboard.py
+```
