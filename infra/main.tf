@@ -1,5 +1,3 @@
-# infra/main.tf
-
 terraform {
   required_providers {
     aws = {
@@ -38,14 +36,30 @@ module "eks" {
   version = "21.10.1"
 
   name               = "ray-llm-demo"
-  kubernetes_version = "1.30"  # Stable, supported with AL2
+  kubernetes_version = "1.30" # Stable, supported with AL2
 
   vpc_id     = module.vpc.vpc_id
   subnet_ids = module.vpc.private_subnets
 
   enable_cluster_creator_admin_permissions = true
 
-  # NO addons block — EKS installs defaults automatically
+  addons = {
+    coredns = {
+      most_recent = true
+    }
+    kube-proxy = {
+      most_recent = true
+    }
+    vpc-cni = {
+      most_recent = true
+      configuration_values = jsonencode({
+        env = {
+          ENABLE_PREFIX_DELEGATION = "true"
+          WARM_PREFIX_TARGET       = "1"
+        }
+      })
+    }
+  }
 
   eks_managed_node_groups = {
     worker = {
@@ -54,7 +68,7 @@ module "eks" {
       max_size     = 2
 
       instance_types = ["m5.large"]
-      ami_type       = "AL2_x86_64"  # Proven stable
+      ami_type       = "AL2_x86_64"
 
       labels = {
         role = "general"
