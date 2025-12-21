@@ -33,10 +33,10 @@ module "vpc" {
 
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "21.10.1"
+  version = "22.0.0"
 
   name               = "ray-llm-demo"
-  kubernetes_version = "1.30" # Stable, supported with AL2
+  kubernetes_version = "1.30"
 
   vpc_id     = module.vpc.vpc_id
   subnet_ids = module.vpc.private_subnets
@@ -68,7 +68,8 @@ module "eks" {
       max_size     = 2
 
       instance_types = ["m5.large"]
-      ami_type       = "AL2_x86_64"
+      ami_type       = "BOTTLEROCKET_x86_64"
+      platform       = "bottlerocket"
 
       labels = {
         role = "general"
