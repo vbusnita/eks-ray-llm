@@ -3,7 +3,6 @@ venv/
 
 # Terraform
 .terraform/
-.terraform.lock.hcl
 .terraform.tfstate.lock.info
 
 # State files (critical - never commit)
