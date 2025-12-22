@@ -40,6 +40,8 @@ Reversed-engineered a working `eksctl` cluster into pure Terraform:
 
 Then deployed KubeRay → RayCluster → dashboard live.
 
+<img width="2611" height="1082" alt="Screenshot 2025-12-21 at 20 29 26" src="https://github.com/user-attachments/assets/daa247d6-b94c-45c7-9fbe-cde318810a0e" />
+
 ## Usage
 
 ```bash
