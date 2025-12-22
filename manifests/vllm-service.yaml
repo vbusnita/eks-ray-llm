@@ -1,0 +1,30 @@
+apiVersion: ray.io/v1
+kind: RayService
+metadata:
+  name: vllm-service
+spec:
+  serveConfigV2: |
+    applications:
+      - name: vllm
+        import_path: vllm.entrypoints.openai.api_server
+        runtime_env:
+          pip:
+            - "vllm==0.5.4"
+        deployments:
+          - name: vLLMDeployment
+            num_replicas: 1
+            ray_actor_options:
+              num_cpus: 2
+            user_config:
+              model: "mistralai/Mistral-7B-v0.1"
+              tensor_parallel_size: 1
+  rayClusterConfig:
+    rayVersion: '2.9.0'
+    headGroupSpec:
+      rayStartParams:
+        dashboard-host: '0.0.0.0'
+    workerGroupSpecs:
+      - groupName: cpu-workers
+        replicas: 1
+        minReplicas: 1
+        maxReplicas: 1
