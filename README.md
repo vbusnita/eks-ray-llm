@@ -71,5 +71,5 @@ aws eks update-kubeconfig --name ray-llm-demo --region us-east-1 --profile terra
 
 # 6. Verify
 kubectl get nodes -o wide
-```
 kubectl get pods --all-namespaces
+```
