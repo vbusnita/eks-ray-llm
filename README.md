@@ -18,6 +18,7 @@ Core pods healthy:
 - CoreDNS
 
 ## Project Structure
+```bash
 eks-ray-llm/
 ├── README.md                    # This file – project overview + battle story
 ├── infra/                       # Terraform configuration
@@ -29,7 +30,7 @@ eks-ray-llm/
 │   ├── tf-clean-init-plan.sh    # Helper script
 │   └── tf-destroy-no-prompt.sh  # Helper script
 ├── serve_demo.py                # Example Ray Serve / vLLM demo script
-
+```
 
 ## Key Features & Fixes (The War Story)
 
