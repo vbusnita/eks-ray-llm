@@ -1,75 +1,62 @@
-# Ray LLM Demo EKS Cluster (Terraform)
+# Ray LLM Demo EKS Cluster (Terraform + KubeRay)
 
-Fully reproducible Amazon EKS cluster for Ray on Kubernetes + vLLM inference experiments.
+Fully reproducible EKS + Ray on Kubernetes platform for vLLM LLM inference experiments.
 
-Built December 21, 2025 after an epic multi-day grind reverse-engineering `eksctl` behavior into pure Terraform.
+**VICTORY ACHIEVED — December 21, 2025** 🎉🔥
 
-## Status: VICTORY 🎉
+RayCluster is **LIVE**:
+- Head + worker pods Running
+- Ray dashboard at `localhost:8265`
+- Ready for Serve deployments and inference
 
-Cluster is **Active**, nodes **Ready**, kubectl working:
-```bash
-NAME                                   STATUS   ROLES    AGE   VERSION
-ip-192-168-1-253.ec2.internal          Ready       11m   v1.30.14-eks-ecaa3a6
-```
-
-Core pods healthy:
-- aws-node (VPC CNI)
-- kube-proxy
-- CoreDNS
-
-## Project Structure
+## Repository Structure
 ```bash
 eks-ray-llm/
-├── README.md                    # This file – project overview + battle story
-├── infra/                       # Terraform configuration
+├── README.md                    # This file – victory log + guide
+├── collect-eks-data.py          # Original eksctl data dumper
+├── eks-data-dump.json           # Reference from working eksctl cluster
+├── infra/                       # Terraform (EKS + VPC)
 │   ├── main.tf
 │   ├── variables.tf
 │   ├── versions.tf
-│   ├── terraform.tfvars         # Local values (gitignore if sensitive)
-│   ├── terraform.tfstate        # Local state (never commit!)
-│   ├── tf-clean-init-plan.sh    # Helper script
-│   └── tf-destroy-no-prompt.sh  # Helper script
-├── serve_demo.py                # Example Ray Serve / vLLM demo script
+│   ├── terraform.tfvars
+│   └── ...
+├── manifests/                   # Kubernetes manifests
+│   ├── ray-cluster-cpu.yaml     # Working RayCluster (head + worker)
+│   └── vllm-service.yaml        # Coming soon
+├── serve_demo.py                # Ray Serve / vLLM demo
+
 ```
 
-## Key Features & Fixes (The War Story)
+## The Journey (Never Forget)
 
-The Terraform config in `infra/` exactly replicates (and improves on) a working `eksctl` cluster:
+Reversed-engineered a working `eksctl` cluster into pure Terraform:
+- Public subnets + MapPublicIpOnLaunch
+- AL2023 AMI + public node placement
+- Cluster primary SG attached to nodes
+- VPC CNI with `before_compute=true`
+- Control plane logging + Container Insights
+- Cost allocation tagging
 
-- **VPC**: 192.168.0.0/16 CIDR, /19 subnets across us-east-1b & us-east-1f
-- **Public subnets** with `map_public_ip_on_launch = true`
-- **Nodes in public subnets** using AL2023 AMI (matches eksctl default)
-- **Security**: Cluster primary SG attached to nodes
-- **VPC CNI**: Addon with `before_compute = true` (fixes initialization race)
-- **Monitoring**: Control plane logging + Container Insights enabled
-- **Tagging**: Consistent tags (Project=ray-llm, Environment=learning, NodeGroup) for cost allocation
-- **Reproducibility**: `.terraform.lock.hcl` committed in `infra/` for exact provider versions
-
-## Major gotchas defeated:
-- Public IP assignment
-- Control plane ↔ node security group communication
-- VPC CNI bootstrap ordering
-- Module/addon version changes
+Then deployed KubeRay → RayCluster → dashboard live.
 
 ## Usage
 
 ```bash
-# 1. Enter infra directory
+# Deploy infra
 cd infra
-
-# 2. Initialize
-terraform init
-
-# 3. Plan
-terraform plan
-
-# 4. Deploy
 terraform apply
 
-# 5. Connect to cluster
+# Connect
 aws eks update-kubeconfig --name ray-llm-demo --region us-east-1 --profile terraform-local
 
-# 6. Verify
-kubectl get nodes -o wide
-kubectl get pods --all-namespaces
+# Install KubeRay operator
+helm install kuberay-operator kuberay/kuberay-operator --namespace kuberay --create-namespace --version 1.2.0
+
+# Deploy RayCluster
+kubectl apply -f ../manifests/ray-cluster-cpu.yaml
+
+# Dashboard
+kubectl port-forward svc/ray-cluster-cpu-head-svc 8265:8265
+open http://localhost:8265
 ```
