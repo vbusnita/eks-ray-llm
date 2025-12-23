@@ -40,17 +40,6 @@ Then deployed KubeRay → RayCluster → dashboard live.
 
 <img width="2611" height="1082" alt="Screenshot 2025-12-21 at 20 29 26" src="https://github.com/user-attachments/assets/daa247d6-b94c-45c7-9fbe-cde318810a0e" />
 
-### 🤖 AI-Augmented Workflow (Powered by xAI Grok Collections)
-
-This entire repo is indexed as a persistent, searchable knowledge base using the Grok Collections API.
-
-- Full initial upload: `python rag/upload_full_repo.py`
-- Delta sync on changes: `python rag/sync_changed.py`
-- **Auto-sync on commit**: Enabled via `.git/hooks/post-commit` → runs sync automatically
-- Test raw retrieval: `python rag/test_query.py`
-
-This enables high-accuracy RAG queries over cross-file context (Terraform ↔ RayCluster ↔ vLLM).
-
 ## Usage
 
 ```bash
@@ -71,3 +60,32 @@ kubectl apply -f ../manifests/ray-cluster-cpu.yaml
 kubectl port-forward svc/ray-cluster-cpu-head-svc 8265:8265
 open http://localhost:8265
 ```
+
+## 🤖 AI-Augmented Workflow (Powered by xAI Grok Collections) 🚀
+
+This repository is now **self-aware** — every file is automatically indexed into a persistent knowledge base using the **xAI Grok Collections API**.
+
+### Key Features
+- **Full codebase indexed**: All meaningful files (`infra/`, `manifests/`, `serve_demo.py`, RAG tooling, etc.) are uploaded and kept in sync.
+- **Auto-sync on every commit**: A Git post-commit hook runs `rag/sync_changed.py` → changed files are instantly updated in the collection.
+- **Agentic RAG assistant**: `rag/ask_repo.py` lets Grok autonomously retrieve relevant chunks and generate detailed, proactive answers grounded in your current code.
+- **Interactive experimentation**: `rag/notebooks/repo_assistant.ipynb` provides a Jupyter interface for asking questions, exploring ideas, and documenting insights with rendered Markdown answers.
+
+### Example Capabilities
+Ask questions like:
+- “Walk me through adding GPU support: new EKS node group in Terraform, taints/tolerations, RayCluster worker specs, and vLLM considerations.”
+- “If Ray worker pods are pending, what are the likely causes based on current infra and manifests?”
+- “Propose improvements to serve_demo.py for multi-GPU distributed serving.”
+
+Grok responds with file-referenced, step-by-step guidance — proactively suggesting optimizations, highlighting issues, and aligning with your exact codebase.
+
+### Why This Matters
+This isn't just deployment automation — it's a **self-documenting, self-guiding platform** that accelerates learning, debugging, and iteration on distributed LLM inference at scale. Every experiment, fix, and new feature instantly becomes part of the AI's knowledge, turning the repo into a living mentor.
+
+Built with resilience: debugged through real SDK challenges (protobuf enums, message typing, response structures) to deliver reliable agentic reasoning.
+
+### Quick Start with the Assistant
+```bash
+# From repo root
+python rag/ask_repo.py  # CLI test
+# Or open rag/notebooks/repo_assistant.ipynb for interactive exploration
