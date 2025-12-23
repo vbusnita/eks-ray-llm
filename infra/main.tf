@@ -77,10 +77,9 @@ module "eks" {
       subnet_ids = module.vpc.public_subnets
 
       labels = {
-        role                             = "general"
-        "alpha.eksctl.io/cluster-name"   = var.cluster_name
-        "alpha.eksctl.io/nodegroup-name" = "worker"
+        role = "general"
       }
+
       tags = {
         Environment = "learning"
         Project     = "ray-llm"
