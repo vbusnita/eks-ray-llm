@@ -24,23 +24,29 @@ print(f"Searching collection: {collection_id}")
 print(f"Query: {query.strip()}\n")
 print("="*80)
 
-results = client.collections.search(
-    query=query,
-    collection_ids=[collection_id],
-    limit=12,                    # More results = better context visibility
-    retrieval_mode="hybrid"      # Optimal for code: semantic + keyword
-)
+response = client.collections.search(
+        query=query,
+        collection_ids=[collection_id],
+        limit=12,
+        retrieval_mode="hybrid"
+    )
 
-if not results.results:
-    print("No results found — check if upload completed and indexing finished.")
-else:
-    print(f"Found {len(results.results)} relevant chunks:\n")
-    for i, r in enumerate(results.results, 1):
-        print(f"{i}. File: {r.document.name}  (score: {r.score:.4f})")
-        print("-" * 60)
-        # Truncate long snippets for readability
-        text_preview = r.text.strip()[:1000]
-        print(text_preview)
-        if len(r.text) > 1000:
-            print("...")
-        print("\n")
+# The field is .matches (repeated Match message)
+results = response.matches
+
+print(f"Found {len(results)} relevant chunks:\n")
+
+for i, r in enumerate(results, 1):
+    # File name from the document in the match
+    file_name = r.file_id  # Fallback if no name; but usually r.document.name if wrapped
+    # From raw: it's r.chunk_content, score, etc.
+    # Better: many have r.document.name? From raw no, but let's use file_id or extract
+
+    # From your raw output: no r.document.name — it's direct chunk_content, score
+    print(f"{i}. Score: {r.score:.4f} | File ID: {r.file_id} | Chunk ID: {r.chunk_id}")
+    print("-" * 60)
+    text_preview = r.chunk_content.strip()[:1000]
+    print(text_preview)
+    if len(r.chunk_content) > 1000:
+        print("...")
+    print("\n")
