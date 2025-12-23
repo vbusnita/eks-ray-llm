@@ -42,7 +42,7 @@ Then deployed KubeRay → RayCluster → dashboard live.
 
 ### AI-Augmented Workflow (Powered by xAI Grok Collections)
 
-Your entire repo is indexed as a persistent, searchable knowledge base using the Grok Collections API.
+This entire repo is indexed as a persistent, searchable knowledge base using the Grok Collections API.
 
 - Full initial upload: `python rag/upload_full_repo.py`
 - Delta sync on changes: `python rag/sync_changed.py`
