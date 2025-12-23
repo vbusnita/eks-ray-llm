@@ -1,6 +1,7 @@
 import os
 from dotenv import load_dotenv
 from xai_sdk import Client
+from xai_sdk.chat import user
 from xai_sdk.tools import collections_search
 
 # Load .env from repo root
@@ -10,24 +11,9 @@ client = Client(api_key=os.getenv("XAI_API_KEY"))
 collection_id = os.getenv("XAI_COLLECTION_ID")
 
 def ask_repo(question: str, model: str = "grok-4"):
-    """
-    Ask a question about the repo — Grok autonomously retrieves relevant chunks
-    and generates a grounded, detailed answer with file references.
-    """
-    # Embed the system instructions into the first user message
-    full_prompt = (
-        "You are an expert in distributed LLM inference on Kubernetes using Ray (KubeRay), vLLM, and AWS EKS. "
-        "Use the retrieved context from the eks-ray-llm repo to answer accurately. "
-        "Always reference specific files and line patterns when possible. "
-        "Be proactive: suggest optimizations, highlight potential issues, and propose next steps for scaling or GPU support.\n\n"
-        f"Question: {question}"
-    )
-
+    # Create stateful Chat with tools
     chat = client.chat.create(
         model=model,
-        messages=[
-            {"role": "user", "content": full_prompt},
-        ],
         tools=[
             collections_search(
                 collection_ids=[collection_id],
@@ -36,7 +22,23 @@ def ask_repo(question: str, model: str = "grok-4"):
             )
         ],
     )
-    return chat.choices[0].message.content
+
+    # Embed expertise + question in user message
+    full_prompt = (
+        "You are an expert in distributed LLM inference on Kubernetes using Ray (KubeRay), vLLM, and AWS EKS. "
+        "Use the retrieved context from the eks-ray-llm repo to answer accurately. "
+        "Always reference specific files and line patterns when possible. "
+        "Be proactive: suggest optimizations, highlight potential issues, and propose next steps for scaling or GPU support.\n\n"
+        f"Question: {question}"
+    )
+
+    # Append the user message
+    chat.append(user(full_prompt))
+
+    # Generate the response (agentic: auto-calls tools if needed)
+    response = chat.sample()
+
+    return response.content
 
 # Quick test
 if __name__ == "__main__":
