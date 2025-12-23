@@ -18,7 +18,7 @@ if not collection_id:
 repo_path = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))  # Repo root
 
 # Directories and patterns to skip
-unwanted_dirs = {'.git', '__pycache__', '.terraform', '.venv', 'node_modules', '.terraform.lock.hcl'}
+unwanted_dirs = {'.git', '__pycache__', '.terraform', '.venv', 'node_modules', '.terraform.lock.hcl', 'venv'}
 skip_extensions = {'~', '.bak'}
 skip_large_mb = 20  # Skip files >20MB (Collections prefers text/code)
 
@@ -50,15 +50,24 @@ for root, dirs, files in os.walk(repo_path):
             with open(file_path, "rb") as f:
                 data = f.read()
 
-            client.collections.upload_document(
-                collection_id=collection_id,
-                name=rel_path,  # Critical: preserves folder structure
-                data=data,
-            )
-            print(f"Uploaded: {rel_path}")
-            uploaded_count += 1
+            for attempt in range(3):
+                try:
+                    client.collections.upload_document(
+                        collection_id=collection_id,
+                        name=rel_path,
+                        data=data,
+                    )
+                    print(f"Uploaded: {rel_path}")
+                    uploaded_count += 1
+                    break  # Success — exit retry loop
+                except Exception as upload_e:
+                    if attempt < 2:
+                        print(f"Retry {attempt+1}/3 for {rel_path}: {str(upload_e)}")
+                        continue
+                    else:
+                        print(f"Failed after 3 attempts: {rel_path} — {str(upload_e)}")
         except Exception as e:
-            print(f"Error uploading {rel_path}: {str(e)}")
+            print(f"Error reading {rel_path}: {str(e)}")
 
 print(f"\nFull upload complete! {uploaded_count} files uploaded.")
 print("Indexing in progress — check console.x.ai → Collections for status.")
