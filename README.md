@@ -40,6 +40,17 @@ Then deployed KubeRay → RayCluster → dashboard live.
 
 <img width="2611" height="1082" alt="Screenshot 2025-12-21 at 20 29 26" src="https://github.com/user-attachments/assets/daa247d6-b94c-45c7-9fbe-cde318810a0e" />
 
+### AI-Augmented Workflow (Powered by xAI Grok Collections)
+
+Your entire repo is indexed as a persistent, searchable knowledge base using the Grok Collections API.
+
+- Full initial upload: `python rag/upload_full_repo.py`
+- Delta sync on changes: `python rag/sync_changed.py`
+- **Auto-sync on commit**: Enabled via `.git/hooks/post-commit` → runs sync automatically
+- Test raw retrieval: `python rag/test_query.py`
+
+This enables high-accuracy RAG queries over cross-file context (Terraform ↔ RayCluster ↔ vLLM).
+
 ## Usage
 
 ```bash
