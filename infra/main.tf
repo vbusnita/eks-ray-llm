@@ -65,19 +65,19 @@ module "eks" {
   }
 
   eks_managed_node_groups = {
-    worker = {
-      name         = "worker"
+    cpu_xlarge = {
+      name         = "cpu-xlarge"
       min_size     = 0
       max_size     = 3
       desired_size = 1
 
-      instance_types = ["m5.large"]
+      instance_types = ["m5.xlarge"]
       ami_type       = "AL2023_x86_64_STANDARD"
 
       subnet_ids = module.vpc.public_subnets
 
       labels = {
-        role = "general"
+        role = "cpu-xlarge"
       }
 
       tags = {
