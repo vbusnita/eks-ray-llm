@@ -40,7 +40,7 @@ Then deployed KubeRay → RayCluster → dashboard live.
 
 <img width="2611" height="1082" alt="Screenshot 2025-12-21 at 20 29 26" src="https://github.com/user-attachments/assets/daa247d6-b94c-45c7-9fbe-cde318810a0e" />
 
-### AI-Augmented Workflow (Powered by xAI Grok Collections)
+### 🤖 AI-Augmented Workflow (Powered by xAI Grok Collections)
 
 This entire repo is indexed as a persistent, searchable knowledge base using the Grok Collections API.
 
