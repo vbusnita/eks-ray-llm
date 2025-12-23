@@ -74,6 +74,8 @@ module "eks" {
       instance_types = ["m5.xlarge"]
       ami_type       = "AL2023_x86_64_STANDARD"
 
+      disk_size = 50
+
       subnet_ids = module.vpc.public_subnets
 
       labels = {
