@@ -66,13 +66,14 @@ module "eks" {
 
   eks_managed_node_groups = {
     worker = {
-      name           = "worker"
-      desired_size   = 1
-      min_size       = 1
-      max_size       = 2
-      instance_types = ["m5.large"]
+      name         = "worker"
+      min_size     = 0
+      max_size     = 3
+      desired_size = 1
 
-      ami_type   = "AL2023_x86_64_STANDARD"
+      instance_types = ["m5.large"]
+      ami_type       = "AL2023_x86_64_STANDARD"
+
       subnet_ids = module.vpc.public_subnets
 
       labels = {
