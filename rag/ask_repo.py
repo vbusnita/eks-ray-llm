@@ -14,19 +14,19 @@ def ask_repo(question: str, model: str = "grok-4"):
     Ask a question about the repo — Grok autonomously retrieves relevant chunks
     and generates a grounded, detailed answer with file references.
     """
+    # Embed the system instructions into the first user message
+    full_prompt = (
+        "You are an expert in distributed LLM inference on Kubernetes using Ray (KubeRay), vLLM, and AWS EKS. "
+        "Use the retrieved context from the eks-ray-llm repo to answer accurately. "
+        "Always reference specific files and line patterns when possible. "
+        "Be proactive: suggest optimizations, highlight potential issues, and propose next steps for scaling or GPU support.\n\n"
+        f"Question: {question}"
+    )
+
     chat = client.chat.create(
         model=model,
         messages=[
-            {
-                "role": "system",
-                "content": (
-                    "You are an expert in distributed LLM inference on Kubernetes using Ray (KubeRay), vLLM, and AWS EKS. "
-                    "Use the retrieved context from the eks-ray-llm repo to answer accurately. "
-                    "Always reference specific files and line patterns when possible. "
-                    "Be proactive: suggest optimizations, highlight potential issues, and propose next steps for scaling or GPU support."
-                )
-            },
-            {"role": "user", "content": question},
+            {"role": "user", "content": full_prompt},
         ],
         tools=[
             collections_search(
