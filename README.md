@@ -2,8 +2,6 @@
 
 Fully reproducible EKS + Ray on Kubernetes platform for vLLM LLM inference experiments.
 
-**VICTORY ACHIEVED — December 21, 2025** 🎉🔥
-
 RayCluster is **LIVE**:
 - Head + worker pods Running
 - Ray dashboard at `localhost:8265`
