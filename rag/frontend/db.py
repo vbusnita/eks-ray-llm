@@ -54,3 +54,18 @@ def save_message(thread_id, role, content):
     c.execute("INSERT INTO messages (thread_id, role, content) VALUES (?, ?, ?)", (thread_id, role, content))
     conn.commit()
     conn.close()
+
+def update_thread_title(thread_id, new_title):
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    c.execute("UPDATE threads SET title = ? WHERE id = ?", (new_title, thread_id))
+    conn.commit()
+    conn.close()
+
+def delete_thread(thread_id):
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    c.execute("DELETE FROM messages WHERE thread_id = ?", (thread_id,))
+    c.execute("DELETE FROM threads WHERE id = ?", (thread_id,))
+    conn.commit()
+    conn.close()
