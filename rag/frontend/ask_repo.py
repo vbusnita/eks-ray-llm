@@ -5,7 +5,7 @@ from xai_sdk.chat import user
 from xai_sdk.tools import collections_search
 
 # Load .env from repo root
-load_dotenv(dotenv_path=os.path.join(os.path.dirname(os.path.dirname(__file__)), ".env"))
+load_dotenv(dotenv_path=os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), ".env"))
 
 client = Client(api_key=os.getenv("XAI_API_KEY"))
 collection_id = os.getenv("XAI_COLLECTION_ID")
