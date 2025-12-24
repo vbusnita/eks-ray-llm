@@ -1,7 +1,13 @@
 import streamlit as st
 from ask_repo import ask_repo
 
-st.set_page_config(page_title="eks-ray-llm Assistant", layout="centered", initial_sidebar_state="collapsed")
+# Page config
+st.set_page_config(
+    page_title="eks-ray-llm Assistant",
+    page_icon="🚀",
+    layout="centered",
+    initial_sidebar_state="collapsed"
+)
 
 st.title("🚀 eks-ray-llm Repo Assistant")
 st.markdown("""
@@ -10,15 +16,29 @@ st.markdown("""
 Ask anything about your codebase. Grok retrieves from the synced collection and answers with file references.
 """)
 
-question = st.text_input("What do you want to know?", placeholder="e.g., How do I add GPU support?")
+# Initialize chat history in session state
+if "messages" not in st.session_state:
+    st.session_state.messages = []
 
-if st.button("Ask Grok"):
-    if question:
+# Display chat history
+for message in st.session_state.messages:
+    with st.chat_message(message["role"]):
+        st.markdown(message["content"])
+
+# User input
+if prompt := st.chat_input("What do you want to know about your codebase?"):
+    # Add user message
+    st.session_state.messages.append({"role": "user", "content": prompt})
+    with st.chat_message("user"):
+        st.markdown(prompt)
+
+    # Get Grok response
+    with st.chat_message("assistant"):
         with st.spinner("Grok is thinking..."):
-            answer = ask_repo(question)
-        st.markdown("### Answer")
-        st.markdown(answer)
-    else:
-        st.warning("Please enter a question.")
+            response = ask_repo(prompt)
+        st.markdown(response)
+
+    # Add assistant message to history
+    st.session_state.messages.append({"role": "assistant", "content": response})
 
 st.caption("Powered by xAI Grok Collections • Auto-synced on every commit")
