@@ -28,7 +28,13 @@ with st.sidebar:
     if threads:
         for thread in threads:
             thread_id, title, created_at = thread
-            created_str = created_at.strftime("%b %d · %H:%M")
+            # Parse string to datetime if needed
+            if isinstance(created_at, str):
+                from datetime import datetime
+                created_dt = datetime.strptime(created_at, "%Y-%m-%d %H:%M:%S")
+            else:
+                created_dt = created_at
+            created_str = created_dt.strftime("%b %d · %H:%M")
 
             col1, col2, col3 = st.columns([5, 1, 1])
             with col1:
