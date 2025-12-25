@@ -76,15 +76,9 @@ Ask questions like:
 - “If Ray worker pods are pending, what are the likely causes based on current infra and manifests?”
 - “Propose improvements to serve_demo.py for multi-GPU distributed serving.”
 
-### Quick Start with the Assistant
-```bash
-# From repo root
-python rag/ask_repo.py
-```
-
 ## Streamlit AI Co-Pilot Frontend 🚀
 
-A beautiful, local Streamlit app has been added as the primary interface for interacting with your RAG-powered repo assistant.
+A beautiful, local Streamlit app has been added as the primary interface for interacting with the RAG-powered repo assistant.
 
 ### Features
 - **Live chat interface** with full conversation history
