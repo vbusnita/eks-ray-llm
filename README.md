@@ -69,7 +69,6 @@ This repository is now **self-aware** — every file is automatically indexed in
 - **Full codebase indexed**: All meaningful files (`infra/`, `manifests/`, `serve_demo.py`, RAG tooling, etc.) are uploaded and kept in sync.
 - **Auto-sync on every commit**: A Git post-commit hook runs `rag/sync_changed.py` → changed files are instantly updated in the collection.
 - **Agentic RAG assistant**: `rag/ask_repo.py` lets Grok autonomously retrieve relevant chunks and generate detailed, proactive answers grounded in your current code.
-- **Interactive experimentation**: `rag/notebooks/repo_assistant.ipynb` provides a Jupyter interface for asking questions, exploring ideas, and documenting insights with rendered Markdown answers.
 
 ### Example Capabilities
 Ask questions like:
@@ -77,15 +76,25 @@ Ask questions like:
 - “If Ray worker pods are pending, what are the likely causes based on current infra and manifests?”
 - “Propose improvements to serve_demo.py for multi-GPU distributed serving.”
 
-Grok responds with file-referenced, step-by-step guidance — proactively suggesting optimizations, highlighting issues, and aligning with your exact codebase.
-
-### Why This Matters
-This isn't just deployment automation — it's a **self-documenting, self-guiding platform** that accelerates learning, debugging, and iteration on distributed LLM inference at scale. Every experiment, fix, and new feature instantly becomes part of the AI's knowledge, turning the repo into a living mentor.
-
-Built with resilience: debugged through real SDK challenges (protobuf enums, message typing, response structures) to deliver reliable agentic reasoning.
-
 ### Quick Start with the Assistant
 ```bash
 # From repo root
-python rag/ask_repo.py  # CLI test
-# Or open rag/notebooks/repo_assistant.ipynb for interactive exploration
+python rag/ask_repo.py
+```
+
+## Streamlit AI Co-Pilot Frontend 🚀
+
+A beautiful, local Streamlit app has been added as the primary interface for interacting with your RAG-powered repo assistant.
+
+### Features
+- **Live chat interface** with full conversation history
+- **Premium dark-mode styling** — Inter font, framed answers, highlighted code blocks
+- **Session persistence** — chat history survives app restarts
+- **Selective deletion** — remove unwanted Q&A pairs with a single click
+- **Simple & focused** — no sidebar clutter, maximum space for insights
+
+### How to Run
+```bash
+# From repo root
+streamlit run rag/frontend/app.py
+```
