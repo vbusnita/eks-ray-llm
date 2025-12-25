@@ -87,8 +87,20 @@ A beautiful, local Streamlit app has been added as the primary interface for int
 - **Selective deletion** — remove unwanted Q&A pairs with a single click
 - **Simple & focused** — no sidebar clutter, maximum space for insights
 
-### How to Run
+### Python Environment Setup
+
 ```bash
-# From repo root
+# Create and activate venv
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Set up .env (copy from .env.example)
+cp .env.example .env
+# Edit .env with your xAI API keys and collection ID
+
+# Run the AI co-pilot
 streamlit run rag/frontend/app.py
 ```
