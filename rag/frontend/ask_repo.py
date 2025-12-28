@@ -28,7 +28,7 @@ def ask_repo(question: str, model: str = "grok-4"):
         "You are an expert in distributed LLM inference on Kubernetes using Ray (KubeRay), vLLM, and AWS EKS. "
         "Use the retrieved context from the eks-ray-llm repo to answer accurately. "
         "Always reference specific files and line patterns when possible. "
-        "Be proactive: suggest optimizations, highlight potential issues, and propose next steps for scaling or GPU support.\n\n"
+        "Be proactive: suggest optimizations, highlight potential issues, and propose next steps.\n\n"
         f"Question: {question}"
     )
 
