@@ -1,0 +1,68 @@
+apiVersion: ray.io/v1
+kind: RayService
+metadata:
+  name: vllm-cpu-service
+  namespace: default
+spec:
+  serviceUnhealthySecondThreshold: 900
+  deploymentUnhealthySecondThreshold: 300
+
+  serveConfigV2: |
+    applications:
+      - name: llm_serve
+        import_path: "vllm.entrypoints.openai.api_server:LLMApp"
+        runtime_env:
+          pip:
+            - "vllm>=0.6.1"
+            - "ray[serve]>=2.37.0"
+        deployments:
+          - name: LLMDeployment
+            num_replicas: 1
+            ray_actor_options:
+              num_cpus: 3  # Leaves 1 vCPU for system/head overhead
+            user_config:
+              model: "microsoft/Phi-3-mini-4k-instruct"
+              max_model_len: 2048
+              dtype: "float16"
+              enforce_eager: true  # Critical for CPU performance
+
+  rayClusterConfig:
+    rayVersion: "2.37.0"
+    headGroupSpec:
+      rayStartParams:
+        dashboard-host: "0.0.0.0"
+      template:
+        spec:
+          containers:
+            - name: ray-head
+              image: rayproject/ray:2.37.0
+              resources:
+                requests:
+                  cpu: "1"
+                  memory: "3Gi"
+                  ephemeral-storage: "10Gi"
+                limits:
+                  cpu: "2"
+                  memory: "6Gi"
+                  ephemeral-storage: "15Gi"
+
+    workerGroupSpecs:
+      - groupName: cpu-workers
+        minReplicas: 1
+        maxReplicas: 1
+        template:
+          spec:
+            containers:
+              - name: ray-worker
+                image: rayproject/ray:2.37.0
+                resources:
+                  requests:
+                    cpu: "2"
+                    memory: "8Gi"
+                    ephemeral-storage: "20Gi"
+                  limits:
+                    cpu: "3"
+                    memory: "10Gi"
+                    ephemeral-storage: "30Gi"
+            nodeSelector:
+              role: "cpu-xlarge"
