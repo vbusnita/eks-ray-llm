@@ -15,6 +15,10 @@ eks-ray-llm/
 ├── eks-data-dump.json           # Reference from working eksctl cluster
 ├── infra/                       # Terraform (EKS + VPC)
 │   ├── main.tf
+│   ├── eks.tf
+│   ├── iam.tf
+│   ├── security.tf
+│   ├── backend.tf
 │   ├── variables.tf
 │   ├── versions.tf
 │   ├── terraform.tfvars
