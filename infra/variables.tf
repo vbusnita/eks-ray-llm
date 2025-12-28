@@ -1,7 +1,7 @@
 variable "cluster_name" {
   description = "Name of the EKS cluster"
   type        = string
-  default     = "ray-llm-demo"
+  default     = "eks-ray-llm"
 }
 
 variable "region" {
