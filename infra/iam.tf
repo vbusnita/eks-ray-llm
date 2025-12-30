@@ -63,6 +63,11 @@ resource "aws_iam_role_policy_attachment" "ec2_container_registry_read_only" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
 }
 
+resource "aws_iam_role_policy_attachment" "ebs_csi_driver_policy" {
+  role       = aws_iam_role.eks_node_role.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"
+}
+
 # Outputs: Share ARNs with other files (e.g., eks.tf)
 output "eks_cluster_role_arn" {
   value = aws_iam_role.eks_cluster_role.arn
