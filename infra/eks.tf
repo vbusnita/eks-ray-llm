@@ -26,9 +26,15 @@ module "eks" {
   cloudwatch_log_group_retention_in_days = 90
   cloudwatch_log_group_kms_key_id        = null
 
+
+  additional_security_group_ids = [aws_security_group.eks_cluster_sg.id] # Attach custom cluster SG (v21 name)
+
   addons = {
     coredns = {
       most_recent = true
+      timeouts = {
+        create = "40m"
+      }
     }
     kube-proxy = {
       most_recent = true
@@ -39,6 +45,11 @@ module "eks" {
     }
     aws-ebs-csi-driver = {
       most_recent = true # Module manages CSI without custom role to avoid cycle
+      timeouts = {
+        create = "60m" # Critical for CSI—often the slowest, timed out even after 40min
+        update = "20m"
+        delete = "10m"
+      }
     }
   }
 
@@ -75,7 +86,6 @@ module "eks" {
       iam_role_additional_policies = {
         AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
       }
-      additional_security_group_ids = [module.eks.cluster_security_group_id]
     }
   }
 
