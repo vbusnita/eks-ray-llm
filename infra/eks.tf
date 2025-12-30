@@ -30,27 +30,27 @@ module "eks" {
   additional_security_group_ids = [aws_security_group.eks_cluster_sg.id] # Attach custom cluster SG (v21 name)
 
   addons = {
-    # coredns = {
-    #   most_recent = true
-    #   timeouts = {
-    #     create = "40m"
-    #   }
-    # }
-    # kube-proxy = {
-    #   most_recent = true
-    # }
-    # vpc-cni = {
-    #   most_recent    = true
-    #   before_compute = true
-    # }
-    # aws-ebs-csi-driver = {
-    #   most_recent = true # Module manages CSI without custom role to avoid cycle
-    #   timeouts = {
-    #     create = "60m" # Critical for CSI—often the slowest, timed out even after 40min
-    #     update = "20m"
-    #     delete = "10m"
-    #   }
-    # }
+    coredns = {
+      most_recent = true
+      timeouts = {
+        create = "40m"
+      }
+    }
+    kube-proxy = {
+      most_recent = true
+    }
+    vpc-cni = {
+      most_recent    = true
+      before_compute = true
+    }
+    aws-ebs-csi-driver = {
+      most_recent = true # Module manages CSI without custom role to avoid cycle
+      timeouts = {
+        create = "60m" # Critical for CSI—often the slowest, timed out even after 40min
+        update = "20m"
+        delete = "10m"
+      }
+    }
   }
 
   eks_managed_node_groups = {
@@ -97,4 +97,22 @@ module "eks" {
   }
 
   depends_on = [aws_iam_role_policy_attachment.eks_cluster_policy]
+}
+
+resource "null_resource" "aws_auth_map" {
+  triggers = {
+    cluster_endpoint = module.eks.cluster_endpoint # Re-run if cluster changes
+  }
+
+  provisioner "local-exec" {
+    command = <<EOT
+      kubectl patch cm aws-auth -n kube-system --type merge -p '{
+        "data": {
+          "mapUsers": "${jsonencode("[{\"userarn\": \"arn:aws:iam::823262829953:root\", \"username\": \"admin\", \"groups\": [\"system:masters\"]}]")} "
+        }
+      }' --kubeconfig <your-kubeconfig-path>
+    EOT
+  }
+
+  depends_on = [module.eks]
 }
