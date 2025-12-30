@@ -5,6 +5,9 @@ venv/
 # Terraform
 .terraform/
 .terraform.tfstate.lock.info
+.terraform.lock 2.hcl
+.terraform.tfstate.lock 2.info
+
 
 # State files (critical - never commit)
 terraform.tfstate
@@ -21,3 +24,8 @@ override.tf
 override.tf.json
 *_override.tf
 *_override.tf.json
+*.patch
+*.bak
+
+# others
+.DS_Store
