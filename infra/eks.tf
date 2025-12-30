@@ -27,66 +27,66 @@ module "eks" {
   cloudwatch_log_group_kms_key_id        = null
 
 
-  # additional_security_group_ids = [aws_security_group.eks_cluster_sg.id] # Attach custom cluster SG (v21 name)
+  additional_security_group_ids = [aws_security_group.eks_cluster_sg.id] # Attach custom cluster SG (v21 name)
 
   addons = {
-    coredns = {
-      most_recent = true
-      timeouts = {
-        create = "40m"
-      }
-    }
-    kube-proxy = {
-      most_recent = true
-    }
-    vpc-cni = {
-      most_recent    = true
-      before_compute = true
-    }
-    aws-ebs-csi-driver = {
-      most_recent = true # Module manages CSI without custom role to avoid cycle
-      timeouts = {
-        create = "60m" # Critical for CSI—often the slowest, timed out even after 40min
-        update = "20m"
-        delete = "10m"
-      }
-    }
+    # coredns = {
+    #   most_recent = true
+    #   timeouts = {
+    #     create = "40m"
+    #   }
+    # }
+    # kube-proxy = {
+    #   most_recent = true
+    # }
+    # vpc-cni = {
+    #   most_recent    = true
+    #   before_compute = true
+    # }
+    # aws-ebs-csi-driver = {
+    #   most_recent = true # Module manages CSI without custom role to avoid cycle
+    #   timeouts = {
+    #     create = "60m" # Critical for CSI—often the slowest, timed out even after 40min
+    #     update = "20m"
+    #     delete = "10m"
+    #   }
+    # }
   }
 
   eks_managed_node_groups = {
-    # cpu_xlarge = {
-    #   name         = "cpu-xlarge"
-    #   min_size     = 0
-    #   max_size     = 3
-    #   desired_size = 1
+    cpu_xlarge = {
+      name         = "cpu-xlarge"
+      min_size     = 0
+      max_size     = 3
+      desired_size = 1
 
-    #   instance_types = ["m5.xlarge"]
-    #   ami_type       = "AL2023_x86_64_STANDARD"
+      instance_types = ["m5.xlarge"]
+      ami_type       = "AL2023_x86_64_STANDARD"
 
-    #   disk_size = 100 # Fixes DiskPressure
+      disk_size = 100 # Fixes DiskPressure
 
-    #   create_iam_role = false # Use custom node role
-    #   iam_role_arn    = aws_iam_role.eks_node_role.arn
+      create_iam_role = false # Use custom node role
+      iam_role_arn    = aws_iam_role.eks_node_role.arn
 
-    #   subnet_ids = module.vpc.private_subnets
+      subnet_ids = module.vpc.private_subnets
 
-    #   vpc_security_group_ids = [aws_security_group.eks_node_sg.id] # Attach custom node SG
+      vpc_security_group_ids = [aws_security_group.eks_node_sg.id] # Attach custom node SG
 
-    #   labels = {
-    #     role = "cpu-xlarge"
-    #   }
+      labels = {
+        role = "cpu-xlarge"
+      }
 
-    #   tags = {
-    #     Environment = "learning"
-    #     Project     = "ray-llm"
-    #     Owner       = "Victor Alexandru Busnita"
-    #     Purpose     = "llm-experiments"
-    #   }
+      tags = {
+        Environment = "learning"
+        Project     = "ray-llm"
+        Owner       = "Victor Alexandru Busnita"
+        Purpose     = "llm-experiments"
+      }
 
-    #   iam_role_additional_policies = {
-    #     AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
-    #   }
-    # }
+      iam_role_additional_policies = {
+        AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+      }
+    }
   }
 
   tags = {
