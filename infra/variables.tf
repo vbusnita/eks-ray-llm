@@ -28,3 +28,9 @@ variable "api_ingress_ip" {
   default     = "0.0.0.0/0" # Fallback open for testing; override locally
   sensitive   = true        # Hides value in terraform plan/apply output
 }
+
+variable "node_group_desired_size" {
+  description = "Desired size for CPU node group (scale to 0 for drain)"
+  type        = number
+  default     = 1
+}
