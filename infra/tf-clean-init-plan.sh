@@ -2,7 +2,7 @@
 set -e  # Exit on any error
 
 echo "🧹 Cleaning Terraform cache and lock..."
-rm -rf .terraform/modules .terraform/providers  # Only modules/providers, keep .terraform/terraform.tfstate
+rm -rf .terraform/modules .terraform/providers .terraform/terraform.tfstate
 
 echo "🔄 Initializing with upgrade..."
 terraform init -upgrade

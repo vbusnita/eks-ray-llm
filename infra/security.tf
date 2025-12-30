@@ -9,7 +9,7 @@ resource "aws_security_group" "eks_cluster_sg" {
     from_port   = 443 # HTTPS for API server
     to_port     = 443
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"] # Restrict to your IP in prod
+    cidr_blocks = ["${var.api_ingress_ip}/32"] # Dynamic + /32 mask
   }
 
   egress {
@@ -41,7 +41,7 @@ resource "aws_security_group" "eks_node_sg" {
     from_port   = 8000
     to_port     = 8265
     protocol    = "tcp"
-    cidr_blocks = ["10.0.0.0/16"] # VPC-internal only
+    cidr_blocks = ["172.31.0.0/16"] # VPC-internal only
   }
 
   egress {

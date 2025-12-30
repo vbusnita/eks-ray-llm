@@ -21,3 +21,10 @@ variable "kubernetes_version" {
   type        = string
   default     = "1.30"
 }
+
+variable "api_ingress_ip" {
+  description = "Your public IP for EKS API server access (e.g., from curl ifconfig.me)"
+  type        = string
+  default     = "0.0.0.0/0" # Fallback open for testing; override locally
+  sensitive   = true        # Hides value in terraform plan/apply output
+}
