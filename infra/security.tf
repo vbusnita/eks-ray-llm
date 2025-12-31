@@ -41,7 +41,7 @@ resource "aws_security_group" "eks_node_sg" {
     from_port   = 8000
     to_port     = 8265
     protocol    = "tcp"
-    cidr_blocks = ["172.31.0.0/16"] # VPC-internal only
+    cidr_blocks = ["${module.vpc.vpc_cidr_block}"] # VPC-internal only
   }
 
   egress {
