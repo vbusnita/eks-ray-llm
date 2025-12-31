@@ -116,18 +116,22 @@ module "eks" {
 
 resource "null_resource" "aws_auth_map" {
   triggers = {
-    cluster_endpoint = module.eks.cluster_endpoint # Re-run if cluster changes
+    cluster_endpoint = module.eks.cluster_endpoint
   }
-
   provisioner "local-exec" {
     command = <<EOT
-      kubectl patch cm aws-auth -n kube-system --type merge -p '{
-        "data": {
-          "mapUsers": "${jsonencode("[{\"userarn\": \"arn:aws:iam::823262829953:root\", \"username\": \"admin\", \"groups\": [\"system:masters\"]}]")} "
+kubectl patch configmap aws-auth -n kube-system --type merge -p "${yamlencode({
+    data = {
+      mapUsers = yamlencode([
+        {
+          userarn  = "arn:aws:iam::823262829953:root"
+          username = "admin"
+          groups   = ["system:masters"]
         }
-      }' --kubeconfig <your-kubeconfig-path>
-    EOT
-  }
-
-  depends_on = [module.eks]
+      ])
+    }
+})}"
+EOT
+}
+depends_on = [module.eks]
 }
