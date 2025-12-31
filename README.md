@@ -1,11 +1,9 @@
-# Ray LLM Demo EKS Cluster (Terraform + KubeRay)
+# EKS-Ray-LLM: My Training Ground for AI Infrastructure Mastery
 
-Fully reproducible EKS + Ray on Kubernetes platform for vLLM LLM inference experiments.
+This repo is my personal training ground for learning and experimenting with AI infrastructure. As a SysAdmin in my 40s with limited knowledge of AI infra but a strong curiosity, I'm using it to build skills in EKS (Kubernetes on AWS), Ray (for distributed AI workloads), and LLM inference with vLLM. What you see here was built in about a week using Grok (xAI's AI) as a guide, through trial-and-error "vibe coding" (implement, break, fix, learn). Now, I'm iterating to level up in areas like Terraform, debugging, and integrating AI systems—aiming for a robust, scalable setup.
 
-RayCluster is **LIVE**:
-- Head + worker pods Running
-- Ray dashboard at `localhost:8265`
-- Ready for Serve deployments and inference
+This isn't production-ready yet, but it's a work-in-progress that demonstrates my hands-on approach. For recruiters: It showcases how I learn by doing, with a clear master plan below to guide my growth.
+
 
 ## Repository Structure
 ```bash
@@ -13,12 +11,12 @@ eks-ray-llm/
 ├── README.md                    # This file – victory log + guide
 ├── collect-eks-data.py          # Original eksctl data dumper
 ├── eks-data-dump.json           # Reference from working eksctl cluster
-├── infra/                       # Terraform (EKS + VPC)
+├── infra/                       # Terraform (EKS + VPC + IAM + SECURITY)
 │   ├── main.tf
 │   ├── eks.tf
 │   ├── iam.tf
 │   ├── security.tf
-│   ├── backend.tf
+│   ├── backend.tf              # State management
 │   ├── variables.tf
 │   ├── versions.tf
 │   ├── tf-clean-init-plan.sh
@@ -31,81 +29,101 @@ eks-ray-llm/
 
 ```
 
-## The Journey (Never Forget)
+## Quick Setup Guide
 
-Reversed-engineered a working `eksctl` cluster into pure Terraform:
-- Public subnets + MapPublicIpOnLaunch
-- AL2023 AMI + public node placement
-- Cluster primary SG attached to nodes
-- VPC CNI with `before_compute=true`
-- Control plane logging + Container Insights
-- Cost allocation tagging
+1. **Prerequisites**: AWS account with CLI configured, Terraform, kubectl, Helm.
 
-Then deployed KubeRay → RayCluster → dashboard live.
-
-<img width="2611" height="1082" alt="Screenshot 2025-12-21 at 20 29 26" src="https://github.com/user-attachments/assets/daa247d6-b94c-45c7-9fbe-cde318810a0e" />
-
-## Usage
+2. **Deploy Infrastructure**:
+   ```bash
+   cd infra
+   terraform init
+   terraform plan
+   terraform apply
 
 ```bash
-# Deploy infra
-cd infra
-terraform apply
+# Update Kubeconfig
+aws eks update-kubeconfig --name ray-llm-demo --region us-east-1 --profile your-profile
 
-# Connect
-aws eks update-kubeconfig --name ray-llm-demo --region us-east-1 --profile terraform-local
-
-# Install KubeRay operator
+# Install KubeRay Operator
 helm install kuberay-operator kuberay/kuberay-operator --namespace kuberay --create-namespace --version 1.2.0
 
 # Deploy RayCluster
 kubectl apply -f ../manifests/ray-cluster-cpu.yaml
 
-# Dashboard
+# Access Ray Dashboard
 kubectl port-forward svc/ray-cluster-cpu-head-svc 8265:8265
 open http://localhost:8265
 ```
 
-## 🤖 AI-Augmented Workflow (Powered by xAI Grok Collections) 🚀
-
-This repository is now **self-aware** — every file is automatically indexed into a persistent knowledge base using the **xAI Grok Collections API**.
-
-### Key Features
-- **Full codebase indexed**: All meaningful files (`infra/`, `manifests/`, `serve_demo.py`, RAG tooling, etc.) are uploaded and kept in sync.
-- **Auto-sync on every commit**: A Git post-commit hook runs `rag/sync_changed.py` → changed files are instantly updated in the collection.
-- **Agentic RAG assistant**: `rag/ask_repo.py` lets Grok autonomously retrieve relevant chunks and generate detailed, proactive answers grounded in your current code.
-
-### Example Capabilities
-Ask questions like:
-- “Walk me through adding GPU support: new EKS node group in Terraform, taints/tolerations, RayCluster worker specs, and vLLM considerations.”
-- “If Ray worker pods are pending, what are the likely causes based on current infra and manifests?”
-- “Propose improvements to serve_demo.py for multi-GPU distributed serving.”
-
-## Streamlit AI Co-Pilot Frontend 🚀
-
-A beautiful, local Streamlit app has been added as the primary interface for interacting with the RAG-powered repo assistant.
-
-### Features
-- **Live chat interface** with full conversation history
-- **Premium dark-mode styling** — Inter font, framed answers, highlighted code blocks
-- **Session persistence** — chat history survives app restarts
-- **Selective deletion** — remove unwanted Q&A pairs with a single click
-- **Simple & focused** — no sidebar clutter, maximum space for insights
-
-### Python Environment Setup
+## RAG Features: Install deps and run the Streamlit app for repo querying
 
 ```bash
-# Create and activate venv
 python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-
-# Install dependencies
+source venv/bin/activate  # Or venv\Scripts\activate on Windows
 pip install -r requirements.txt
-
-# Set up .env (copy from .env.example)
-cp .env.example .env
-# Edit .env with your xAI API keys and collection ID
-
-# Run the AI co-pilot
+cp .env.example .env  # Add xAI API keys
 streamlit run rag/frontend/app.py
 ```
+
+## Master Plan: Roadmap for Leveling Up
+
+This is my structured plan to evolve the repo from basic to advanced, building key skills along the way. I'll track progress via commits and issues. Each phase focuses on 1-2 weeks of part-time work (5-10 hours/week) to fit family life.
+
+# Phase 1: Polish Basics (Current Focus - Q1 2026)
+
+- Goals: Add testing, CI/CD, and documentation.
+- Skills to Build: Unit testing (pytest), GitHub Actions, modular Terraform.
+
+- Tasks:
+  - Add pytest tests for Python scripts (e.g., serve_demo.py, ask_repo.py).
+  - Set up GitHub Actions for linting (flake8, tfsec) and auto-deploys.
+  - Refactor Terraform into reusable modules; add variables for customization.
+
+- Why?: Ensures reliability; shows attention to quality in interviews.
+
+# Phase 2: Add GPU and Scaling (Q1 2026)
+
+- Goals: Enable GPU inference and autoscaling.
+- Skills to Build: AWS node groups, K8s taints/tolerations, HPA/Cluster Autoscaler.
+
+- Tasks:
+  - Create GPU node group in Terraform (e.g., g4dn instances).
+  - Update Ray manifests for GPU support; test vLLM inference on models like Llama.
+  - Integrate autoscaling for Ray workers based on load.
+
+- Why?: Makes it real for ML workloads; demonstrates scaling expertise.
+
+# Phase 3: Monitoring and Security (Q2 2026)
+
+- Goals: Harden security and add observability.
+- Skills to Build: IRSA, network policies, Prometheus/Grafana.
+
+- Tasks:
+  - Enable IRSA for pods; use Secrets Manager for keys.
+  - Add Prometheus for Ray metrics; set up dashboards.
+  - Implement vulnerability scanning (Trivy) in CI.
+
+- Why?: Production-readiness; highlights security mindset.
+
+# Phase 4: Advanced AI Features and Innovation (Q2-Q3 2026)
+
+- Goals: Enhance RAG and add novel elements.
+- Skills to Build: Embeddings, agentic AI, benchmarks.
+
+- Tasks:
+  - Improve RAG with chunking/embeddings (e.g., FAISS).
+  - Add agentic automation: Grok-generated code patches via PRs.
+  - Run benchmarks (vLLM vs. baselines); contribute to upstream if possible.
+
+- Why?: Shows creativity; turns repo into a unique portfolio piece.
+
+# Phase 5: Optimization and Community (Ongoing)
+
+- Goals: Cost/efficiency tweaks; share learnings.
+- Skills to Build: Spot Instances, multi-AZ, networking.
+
+- Tasks:
+  - Optimize costs (e.g., Spot nodes); add multi-region support.
+  - Document failures in a "Lessons Learned" file.
+
+- Why?: Keeps the infra efficient and resilient.
