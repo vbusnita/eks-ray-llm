@@ -50,6 +50,15 @@ module "eks" {
         update = "20m"
         delete = "10m"
       }
+      service_account_role_arn = module.ebs_csi_driver_irsa_role.iam_role_arn
+
+      # Critical: force dependency on your manual policy attachment
+      depends_on = [
+        aws_iam_role_policy_attachment.ebs_csi_driver_policy,
+        aws_iam_role_policy_attachment.eks_worker_node_policy,
+        aws_iam_role_policy_attachment.eks_cni_policy,
+        aws_iam_role_policy_attachment.ec2_container_registry_read_only
+      ]
     }
   }
 
@@ -64,6 +73,12 @@ module "eks" {
       ami_type       = "AL2023_x86_64_STANDARD"
 
       disk_size = 100 # Fixes DiskPressure
+
+      metadata_options = {
+        http_endpoint               = "enabled"
+        http_tokens                 = "required" # Keeps IMDSv2 required (secure)
+        http_put_response_hop_limit = 2          # Critical fix
+      }
 
       create_iam_role = false # Use custom node role
       iam_role_arn    = aws_iam_role.eks_node_role.arn

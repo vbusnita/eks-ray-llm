@@ -76,3 +76,36 @@ output "eks_cluster_role_arn" {
 output "eks_node_role_arn" {
   value = aws_iam_role.eks_node_role.arn
 }
+
+module "ebs_csi_driver_irsa_role" {
+  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
+  version = "~> 5.44"
+
+  role_name_prefix = "${var.cluster_name}-ebs-csi-"
+
+  attach_ebs_csi_policy = true
+
+  oidc_providers = {
+    main = {
+      provider_arn               = module.eks.oidc_provider_arn
+      namespace_service_accounts = ["kube-system:ebs-csi-controller-sa"]
+    }
+  }
+
+  tags = {
+    Environment = "learning"
+    Project     = "ray-llm"
+    Owner       = "Victor Alexandru Busnita"
+    Purpose     = "llm-experiments"
+  }
+}
+
+resource "aws_iam_role_policy_attachment" "ebs_csi_irsa_explicit" {
+  role       = split("/", module.ebs_csi_driver_irsa_role.iam_role_name)[1]
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"
+}
+
+output "ebs_csi_irsa_role_arn" {
+  value       = module.ebs_csi_driver_irsa_role.iam_role_arn
+  description = "ARN of IRSA role for EBS CSI driver"
+}
