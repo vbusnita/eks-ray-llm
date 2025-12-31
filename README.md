@@ -21,8 +21,9 @@ eks-ray-llm/
 │   ├── backend.tf
 │   ├── variables.tf
 │   ├── versions.tf
-│   ├── terraform.tfvars
-│   └── ...
+│   ├── tf-clean-init-plan.sh
+│   ├── tf-destroy-no-prompt.sh
+│   └── .terraform.lock.hcl
 ├── manifests/                   # Kubernetes manifests
 │   ├── ray-cluster-cpu.yaml     # Working RayCluster (head + worker)
 │   └── vllm-service.yaml        # Coming soon
