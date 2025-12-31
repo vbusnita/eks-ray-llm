@@ -67,7 +67,8 @@ streamlit run rag/frontend/app.py
 
 # Master Plan: Roadmap for Leveling Up
 
-This is my structured plan to evolve the repo from basic to advanced, building key skills along the way. I'll track progress via commits and issues. Each phase focuses on 1-2 weeks of part-time work (5-10 hours/week) to fit family life.
+This is my structured plan to evolve the repo from basic to advanced, building key skills along the way. 
+I'll track progress via commits. Each phase focuses on 1-2 weeks of part-time work (5-10 hours/week) to fit family life.
 
 ## Phase 1: Polish Basics (Current Focus - Q1 2026)
 
