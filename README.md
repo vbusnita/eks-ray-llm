@@ -65,11 +65,11 @@ cp .env.example .env  # Add xAI API keys
 streamlit run rag/frontend/app.py
 ```
 
-## Master Plan: Roadmap for Leveling Up
+# Master Plan: Roadmap for Leveling Up
 
 This is my structured plan to evolve the repo from basic to advanced, building key skills along the way. I'll track progress via commits and issues. Each phase focuses on 1-2 weeks of part-time work (5-10 hours/week) to fit family life.
 
-# Phase 1: Polish Basics (Current Focus - Q1 2026)
+## Phase 1: Polish Basics (Current Focus - Q1 2026)
 
 - Goals: Add testing, CI/CD, and documentation.
 - Skills to Build: Unit testing (pytest), GitHub Actions, modular Terraform.
@@ -81,7 +81,7 @@ This is my structured plan to evolve the repo from basic to advanced, building k
 
 - Why?: Ensures reliability; shows attention to quality in interviews.
 
-# Phase 2: Add GPU and Scaling (Q1 2026)
+## Phase 2: Add GPU and Scaling (Q1 2026)
 
 - Goals: Enable GPU inference and autoscaling.
 - Skills to Build: AWS node groups, K8s taints/tolerations, HPA/Cluster Autoscaler.
@@ -93,7 +93,7 @@ This is my structured plan to evolve the repo from basic to advanced, building k
 
 - Why?: Makes it real for ML workloads; demonstrates scaling expertise.
 
-# Phase 3: Monitoring and Security (Q2 2026)
+## Phase 3: Monitoring and Security (Q2 2026)
 
 - Goals: Harden security and add observability.
 - Skills to Build: IRSA, network policies, Prometheus/Grafana.
@@ -105,7 +105,7 @@ This is my structured plan to evolve the repo from basic to advanced, building k
 
 - Why?: Production-readiness; highlights security mindset.
 
-# Phase 4: Advanced AI Features and Innovation (Q2-Q3 2026)
+## Phase 4: Advanced AI Features and Innovation (Q2-Q3 2026)
 
 - Goals: Enhance RAG and add novel elements.
 - Skills to Build: Embeddings, agentic AI, benchmarks.
@@ -117,7 +117,7 @@ This is my structured plan to evolve the repo from basic to advanced, building k
 
 - Why?: Shows creativity; turns repo into a unique portfolio piece.
 
-# Phase 5: Optimization and Community (Ongoing)
+## Phase 5: Optimization and Community (Ongoing)
 
 - Goals: Cost/efficiency tweaks; share learnings.
 - Skills to Build: Spot Instances, multi-AZ, networking.
