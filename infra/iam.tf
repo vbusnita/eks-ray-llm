@@ -79,7 +79,7 @@ output "eks_node_role_arn" {
 
 module "ebs_csi_driver_irsa_role" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
-  version = "~> 5.44"
+  version = "~> 5.46" # Latest as of Jan 2026, fixes deprecated .name → .id
 
   role_name_prefix = "${var.cluster_name}-ebs-csi-"
 

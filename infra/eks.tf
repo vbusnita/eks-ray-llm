@@ -69,7 +69,7 @@ module "eks" {
       max_size     = 3
       desired_size = var.node_group_desired_size
 
-      instance_types = ["m5.xlarge"]
+      instance_types = ["m6i.2xlarge"]
       ami_type       = "AL2023_x86_64_STANDARD"
 
       disk_size = 100 # Fixes DiskPressure
