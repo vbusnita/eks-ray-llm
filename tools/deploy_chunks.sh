@@ -56,8 +56,8 @@ echo "======================"
 terraform apply -target=null_resource.aws_auth_map -auto-approve 2>&1 | tee -a "$DEBUG_LOG"
 
 echo
-echo "=== DONE! ==="
-echo "Full cluster deployed via chunks!"
-echo "Normal output shown above"
+echo "=======================================================================
+echo "INFRASTRUCTURE IS UP!"
 echo "Full DEBUG logs in: $LOG_DIR/terraform-debug.log"
+echo "Dashboard: kubectl port-forward svc/ray-cluster-cpu-head-svc 8265:8265"
 echo "Verify with: kubectl get nodes"
