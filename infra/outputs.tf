@@ -13,8 +13,3 @@ output "cluster_name" {
   description = "Name of the EKS cluster"
   value       = module.eks.cluster_name
 }
-
-output "node_group_status" {
-  description = "Status of the managed node group"
-  value       = module.eks.eks_managed_node_groups["cpu_xlarge"].status
-}
