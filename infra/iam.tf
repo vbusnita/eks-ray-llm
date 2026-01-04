@@ -68,14 +68,9 @@ resource "aws_iam_role_policy_attachment" "ebs_csi_driver_policy" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"
 }
 
-# Outputs: Share ARNs with other files (e.g., eks.tf)
-output "eks_cluster_role_arn" {
-  value = aws_iam_role.eks_cluster_role.arn
-}
+data "aws_caller_identity" "current" {}
 
-output "eks_node_role_arn" {
-  value = aws_iam_role.eks_node_role.arn
-}
+data "aws_partition" "current" {}
 
 module "ebs_csi_driver_irsa_role" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
@@ -98,11 +93,6 @@ module "ebs_csi_driver_irsa_role" {
     Owner       = "Victor Alexandru Busnita"
     Purpose     = "llm-experiments"
   }
-}
-
-resource "aws_iam_role_policy_attachment" "ebs_csi_irsa_explicit" {
-  role       = split("/", module.ebs_csi_driver_irsa_role.iam_role_arn)[1]
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"
 }
 
 output "ebs_csi_irsa_role_arn" {

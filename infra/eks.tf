@@ -2,7 +2,7 @@
 
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "~> 21.0"
+  version = "~> 21.10.1"
 
   name               = var.cluster_name
   kubernetes_version = var.kubernetes_version
@@ -42,23 +42,6 @@ module "eks" {
     vpc-cni = {
       most_recent    = true
       before_compute = true
-    }
-    aws-ebs-csi-driver = {
-      most_recent = true # Module manages CSI without custom role to avoid cycle
-      timeouts = {
-        create = "60m" # Critical for CSI—often the slowest, timed out even after 40min
-        update = "20m"
-        delete = "10m"
-      }
-      service_account_role_arn = module.ebs_csi_driver_irsa_role.iam_role_arn
-
-      # Critical: force dependency on your manual policy attachment
-      depends_on = [
-        aws_iam_role_policy_attachment.ebs_csi_driver_policy,
-        aws_iam_role_policy_attachment.eks_worker_node_policy,
-        aws_iam_role_policy_attachment.eks_cni_policy,
-        aws_iam_role_policy_attachment.ec2_container_registry_read_only
-      ]
     }
   }
 
@@ -112,6 +95,35 @@ module "eks" {
   }
 
   depends_on = [aws_iam_role_policy_attachment.eks_cluster_policy]
+}
+
+data "aws_eks_addon_version" "ebs_csi" {
+  addon_name         = "aws-ebs-csi-driver"
+  kubernetes_version = var.kubernetes_version
+  most_recent        = true
+}
+
+resource "aws_eks_addon" "ebs_csi_driver" {
+  cluster_name                = module.eks.cluster_name
+  addon_name                  = "aws-ebs-csi-driver"
+  addon_version               = data.aws_eks_addon_version.ebs_csi.version
+  service_account_role_arn    = module.ebs_csi_driver_irsa_role.iam_role_arn
+  resolve_conflicts_on_create = "OVERWRITE"
+  resolve_conflicts_on_update = "OVERWRITE"
+
+  timeouts {
+    create = "60m"
+    update = "20m"
+    delete = "10m"
+  }
+
+  depends_on = [
+    module.eks,
+    module.ebs_csi_driver_irsa_role,
+    aws_iam_role_policy_attachment.eks_worker_node_policy,
+    aws_iam_role_policy_attachment.eks_cni_policy,
+    aws_iam_role_policy_attachment.ec2_container_registry_read_only
+  ]
 }
 
 resource "null_resource" "aws_auth_map" {
