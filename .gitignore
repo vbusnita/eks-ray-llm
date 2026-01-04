@@ -29,3 +29,5 @@ override.tf.json
 
 # others
 .DS_Store
+tools/logs/
+vllm-src
