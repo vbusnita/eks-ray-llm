@@ -26,11 +26,11 @@ plan-destroy:
 
 # Apply Terraform changes
 apply:
-	terraform apply
+	terraform apply -auto-approve
 
 # Destroy infrastructure
 destroy:
-	terraform destroy
+	terraform destroy -auto-approve
 
 # Refresh Terraform state
 refresh:
