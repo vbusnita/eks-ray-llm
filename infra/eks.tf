@@ -21,9 +21,6 @@ module "eks" {
 
   enable_cluster_creator_admin_permissions = true
 
-  aws_auth_roles = var.aws_auth_roles
-  aws_auth_users = var.aws_auth_users
-
   enabled_log_types                      = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
   create_cloudwatch_log_group            = true
   cloudwatch_log_group_retention_in_days = 90
@@ -88,10 +85,6 @@ module "eks" {
       iam_role_additional_policies = {
         AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
       }
-
-      lifecycle {
-        prevent_destroy = false
-      }
     }
   }
 
@@ -104,10 +97,31 @@ module "eks" {
   }
 
   depends_on = [aws_iam_role_policy_attachment.eks_cluster_policy]
+}
 
-  lifecycle {
-    prevent_destroy = false
+# AWS Auth ConfigMap management (since module version doesn't support aws_auth_roles/users yet)
+resource "null_resource" "aws_auth_map" {
+  triggers = {
+    cluster_endpoint = module.eks.cluster_endpoint
   }
+
+  provisioner "local-exec" {
+    command = <<EOT
+kubectl patch configmap aws-auth -n kube-system --type merge -p "${yamlencode({
+    data = {
+      mapUsers = yamlencode([
+        {
+          userarn  = "arn:aws:iam::823262829953:root"
+          username = "admin"
+          groups   = ["system:masters"]
+        }
+      ])
+    }
+})}"
+EOT
+  }
+
+  depends_on = [module.eks]
 }
 
 data "aws_eks_addon_version" "ebs_csi" {
