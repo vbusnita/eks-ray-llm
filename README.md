@@ -128,3 +128,50 @@ I'll track progress via commits. Each phase focuses on 1-2 weeks of part-time wo
   - Document failures in a "Lessons Learned" file.
 
 - Why?: Keeps the infra efficient and resilient.
+
+## Terraform Infrastructure Management
+
+### Quick Start
+```bash
+cd infra/
+make init      # Initialize Terraform and workspaces
+make validate  # Validate configuration
+make plan      # Plan changes
+make apply     # Apply changes
+```
+
+### Available Commands
+- `make init`: Initialize Terraform with workspaces
+- `make validate`: Validate Terraform syntax
+- `make tflint`: Run TFLint for code quality
+- `make plan`: Show planned changes
+- `make plan-destroy`: Preview destroy operation
+- `make apply`: Apply infrastructure changes
+- `make destroy`: Destroy infrastructure
+- `make refresh`: Refresh Terraform state
+- `make check`: Run full validation pipeline (validate + tflint + plan)
+
+### Cleanup and Cost Management
+
+#### EKS Cleanup Guide
+For proper cleanup to avoid lingering resources and charges:
+- [AWS EKS Cleanup Documentation](https://docs.aws.amazon.com/eks/latest/userguide/delete-cluster.html)
+- Use the provided `destroy.sh` script for safe, ordered destruction
+- Always scale node groups to 0 before destroying to stop EC2 costs
+
+#### AWS Budget and Cost Monitoring Tips
+To prevent unexpected charges:
+1. Set up AWS Budgets with alerts:
+   - Go to AWS Billing > Budgets > Create budget
+   - Set monthly budget (e.g., $50 for learning)
+   - Configure email alerts at 50%, 80%, 100%
+2. Enable Cost Allocation Tags:
+   - Tag resources with `Project = "ray-llm"` for filtering
+   - Use Cost Explorer to track spending by tag
+3. Use the `DeploymentID` tag for easy resource identification and cleanup
+4. Monitor with AWS Cost Anomaly Detection for unusual spending patterns
+
+#### State Management
+- DynamoDB table `eks-ray-llm-terraform-locks` provides state locking
+- Use workspaces for multiple environments: `terraform workspace select <name>`
+- Always run `terraform refresh` before operations to sync state
