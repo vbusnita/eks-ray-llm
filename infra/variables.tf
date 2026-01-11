@@ -34,3 +34,41 @@ variable "node_group_desired_size" {
   type        = number
   default     = 1
 }
+
+variable "deployment_id" {
+  description = "Unique identifier for this deployment (used in tags for cleanup)"
+  type        = string
+  default     = ""  # Will be set via random_uuid if empty
+}
+
+variable "endpoint_public_access_cidrs" {
+  description = "CIDR blocks allowed to access EKS API server publicly"
+  type        = list(string)
+  default     = ["0.0.0.0/0"]  # Override with your IP for security (e.g., ["YOUR_IP/32"])
+}
+
+variable "aws_auth_roles" {
+  description = "Additional IAM roles to add to aws-auth ConfigMap"
+  type = list(object({
+    rolearn  = string
+    username = string
+    groups   = list(string)
+  }))
+  default = []
+}
+
+variable "aws_auth_users" {
+  description = "Additional IAM users to add to aws-auth ConfigMap"
+  type = list(object({
+    userarn  = string
+    username = string
+    groups   = list(string)
+  }))
+  default = [
+    {
+      userarn  = "arn:aws:iam::823262829953:root"
+      username = "admin"
+      groups   = ["system:masters"]
+    }
+  ]
+}

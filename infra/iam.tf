@@ -16,6 +16,14 @@ resource "aws_iam_role" "eks_cluster_role" {
       }
     ]
   })
+
+  tags = {
+    Environment  = "learning"
+    Project      = "ray-llm"
+    Owner        = "Victor Alexandru Busnita"
+    Purpose      = "llm-experiments"
+    DeploymentID = local.deployment_id
+  }
 }
 
 # Attach necessary policies to cluster role
@@ -45,6 +53,14 @@ resource "aws_iam_role" "eks_node_role" {
       }
     ]
   })
+
+  tags = {
+    Environment  = "learning"
+    Project      = "ray-llm"
+    Owner        = "Victor Alexandru Busnita"
+    Purpose      = "llm-experiments"
+    DeploymentID = local.deployment_id
+  }
 }
 
 # Attach policies to node role (least privilege for EKS workers)
@@ -88,10 +104,11 @@ module "ebs_csi_driver_irsa_role" {
   }
 
   tags = {
-    Environment = "learning"
-    Project     = "ray-llm"
-    Owner       = "Victor Alexandru Busnita"
-    Purpose     = "llm-experiments"
+    Environment  = "learning"
+    Project      = "ray-llm"
+    Owner        = "Victor Alexandru Busnita"
+    Purpose      = "llm-experiments"
+    DeploymentID = local.deployment_id
   }
 }
 

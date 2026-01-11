@@ -20,7 +20,12 @@ resource "aws_security_group" "eks_cluster_sg" {
   }
 
   tags = {
-    Name = "${var.cluster_name}-cluster-sg"
+    Name         = "${var.cluster_name}-cluster-sg"
+    Environment  = "learning"
+    Project      = "ray-llm"
+    Owner        = "Victor Alexandru Busnita"
+    Purpose      = "llm-experiments"
+    DeploymentID = local.deployment_id
   }
 }
 
@@ -52,6 +57,11 @@ resource "aws_security_group" "eks_node_sg" {
   }
 
   tags = {
-    Name = "${var.cluster_name}-node-sg"
+    Name         = "${var.cluster_name}-node-sg"
+    Environment  = "learning"
+    Project      = "ray-llm"
+    Owner        = "Victor Alexandru Busnita"
+    Purpose      = "llm-experiments"
+    DeploymentID = local.deployment_id
   }
 }
